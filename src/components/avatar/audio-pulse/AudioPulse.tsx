@@ -35,10 +35,10 @@ export default function AudioPulse({ active, volume, hover }: AudioPulseProps) {
     const update = () => {
       lines.current.forEach(
         (line, i) =>
-        (line.style.height = `${Math.min(
-          24,
-          4 + volume * (i === 1 ? 400 : 60),
-        )}px`),
+          (line.style.height = `${Math.min(
+            24,
+            4 + volume * (i === 1 ? 400 : 60)
+          )}px`)
       );
       timeout = window.setTimeout(update, 100);
     };
@@ -55,7 +55,9 @@ export default function AudioPulse({ active, volume, hover }: AudioPulseProps) {
         .map((_, i) => (
           <div
             key={i}
-            ref={(el) => (lines.current[i] = el!)}
+            ref={(el) => {
+              lines.current[i] = el!;
+            }}
             style={{ animationDelay: `${i * 133}ms` }}
           />
         ))}

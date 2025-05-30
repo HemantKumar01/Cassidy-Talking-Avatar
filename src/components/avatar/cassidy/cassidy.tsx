@@ -26,13 +26,13 @@ const Cassidy = () => {
   }, []);
   const AUDIO_OUTPUT_DETECTION_THRESHOLD = 0.05;
   useEffect(() => {
-    console.log(volume);
+    // console.log(volume);
     if (volume > AUDIO_OUTPUT_DETECTION_THRESHOLD) {
       setMouth("B.png");
     } else {
       setMouth("X.png");
     }
-    console.log("Cassidy volume", connected, volume);
+    // console.log("Cassidy volume", connected, volume);
   }, [connected, volume]);
   return (
     <div
