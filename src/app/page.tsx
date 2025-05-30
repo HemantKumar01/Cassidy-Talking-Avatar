@@ -19,7 +19,7 @@ import ControlTray from "@/components/avatar/control-tray/ControlTray";
 import { LiveClientOptions } from "./types";
 import { GeminiLive } from "@/components/avatar/geminiLive/geminiLive";
 import Cassidy from "@/components/avatar/cassidy/cassidy";
-import "./app.scss";
+import "./App.scss";
 
 import "./globals.css";
 
