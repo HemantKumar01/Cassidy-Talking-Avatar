@@ -1,6 +1,6 @@
 # Cassidy
 Cassidy is a cute 2d talking avatar. She can talk with you live using gemini-2.5-live.
-![Cassidy image](image.png)
+![Cassidy image while streaming](image-1.png)
 
 # Installation
 1. Clone the repository:
