@@ -19,9 +19,11 @@ import ControlTray from "@/components/avatar/control-tray/ControlTray";
 import { LiveClientOptions } from "./types";
 import { GeminiLive } from "@/components/avatar/geminiLive/geminiLive";
 import Cassidy from "@/components/avatar/cassidy/cassidy";
+import { requireAuth } from "@/lib/firebase";
 import "./App.scss";
 
 import "./globals.css";
+import { sign } from "crypto";
 
 const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {

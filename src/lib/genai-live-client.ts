@@ -195,6 +195,15 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
     // or contentUpdate { end_of_turn: true }
     if (message.serverContent) {
       const { serverContent } = message;
+      let inputTranscription = serverContent.inputTranscription
+      if (inputTranscription && inputTranscription.text){
+        console.log("Input Transcript:", inputTranscription.text)
+      }
+      let outputTranscription = serverContent.outputTranscription
+      if (outputTranscription && outputTranscription.text){
+        console.log("Output Transcript:", outputTranscription.text)
+      }
+      // console.log(message, serverContent)
       if ("interrupted" in serverContent) {
         this.log("server.content", "interrupted");
         this.emit("interrupted");

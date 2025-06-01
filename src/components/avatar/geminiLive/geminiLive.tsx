@@ -25,6 +25,8 @@ function GeminiLiveComponent() {
 
     setConfig({
       responseModalities: [Modality.AUDIO],
+      inputAudioTranscription: {},
+      outputAudioTranscription: {},
       speechConfig: {
         voiceConfig: { prebuiltVoiceConfig: { voiceName: "Leda" } },
         // other possible voices : Autotune, Callirhoe, Laomedeia
