@@ -24,6 +24,7 @@ import "./App.scss";
 
 import "./globals.css";
 import { sign } from "crypto";
+import { useEffect } from "react";
 
 const API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY as string;
 if (typeof API_KEY !== "string") {
@@ -35,6 +36,9 @@ const apiOptions: LiveClientOptions = {
 };
 
 function Home() {
+  useEffect(() => {
+    requireAuth();
+  }, []);
   return (
     <div className="App w-full h-full">
       <LiveAPIProvider options={apiOptions}>
