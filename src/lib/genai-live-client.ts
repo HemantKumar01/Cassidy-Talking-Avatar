@@ -32,7 +32,7 @@ import { EventEmitter } from "eventemitter3";
 import { difference } from "lodash";
 import { LiveClientOptions, StreamingLog } from "@/app/types";
 import { base64ToArrayBuffer } from "./utils";
-
+import {addMessageToHistory} from "@/lib/firebase"
 /**
  * Event types that can be emitted by the MultimodalLiveClient.
  * Each event corresponds to a specific message from GenAI or client state change.
@@ -71,7 +71,7 @@ export interface LiveClientEventTypes {
  */
 export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
   protected client: GoogleGenAI;
-
+  public messageTranscription: {role:'user' | 'assistant', message:string} | null = null;
   private _status: "connected" | "disconnected" | "connecting" = "disconnected";
   public get status() {
     return this._status;
@@ -196,22 +196,55 @@ export class GenAILiveClient extends EventEmitter<LiveClientEventTypes> {
     if (message.serverContent) {
       const { serverContent } = message;
       let inputTranscription = serverContent.inputTranscription
+
       if (inputTranscription && inputTranscription.text){
         console.log("Input Transcript:", inputTranscription.text)
+        inputTranscription.text = inputTranscription.text.replace("<noise>", "");
+        if(this.messageTranscription && this.messageTranscription.role == 'user'){
+          this.messageTranscription.message += inputTranscription.text;
+        }else{
+          if(this.messageTranscription){
+            addMessageToHistory(this.messageTranscription)
+          }
+          this.messageTranscription = {
+            role: "user",
+            message: inputTranscription.text,
+          };
+        }
       }
       let outputTranscription = serverContent.outputTranscription
       if (outputTranscription && outputTranscription.text){
         console.log("Output Transcript:", outputTranscription.text)
+        outputTranscription.text = outputTranscription.text.replace("<noise>", "");
+        if(this.messageTranscription && this.messageTranscription.role == 'assistant'){
+          this.messageTranscription.message += outputTranscription.text;
+        }else{
+          if(this.messageTranscription){
+            addMessageToHistory(this.messageTranscription)
+          }
+          this.messageTranscription = {
+            role: "assistant",
+            message: outputTranscription.text,
+          };
+        }
       }
       // console.log(message, serverContent)
       if ("interrupted" in serverContent) {
         this.log("server.content", "interrupted");
         this.emit("interrupted");
+        if(this.messageTranscription){
+          addMessageToHistory(this.messageTranscription)
+        }
+        this.messageTranscription = null;
         return;
       }
       if ("turnComplete" in serverContent) {
         this.log("server.content", "turnComplete");
         this.emit("turncomplete");
+        if(this.messageTranscription){
+          addMessageToHistory(this.messageTranscription)
+        }
+        this.messageTranscription = null;
       }
 
       if ("modelTurn" in serverContent) {

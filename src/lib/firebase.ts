@@ -94,38 +94,19 @@ const createUserDocument = async (user: User): Promise<void> => {
 
 // Message history interface
 export interface MessageHistoryItem {
-  id: string;
   message: string;
-  timestamp: Date;
-  type: 'user' | 'assistant';
-  [key: string]: any; // Allow additional properties
+  role: 'user' | 'assistant';
 }
 
-// Set message history for a user
-export const setMessageHistory = async (
-  userId: string, 
-  messageHistory: MessageHistoryItem[]
-): Promise<void> => {
-  try {
-    const userDocRef = doc(db, 'users', userId);
-    
-    await updateDoc(userDocRef, {
-      userHistory: messageHistory,
-      updatedAt: serverTimestamp()
-    });
-    
-    console.log('Message history updated successfully');
-  } catch (error) {
-    console.error('Error setting message history:', error);
-    throw error;
-  }
-};
 
 // Get message history for a user
 export const getMessageHistory = async (
-  userId: string
 ): Promise<MessageHistoryItem[]> => {
   try {
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      throw new Error('User is not authenticated');
+    }
     const userDocRef = doc(db, 'users', userId);
     const userSnapshot = await getDoc(userDocRef);
     
@@ -144,29 +125,28 @@ export const getMessageHistory = async (
 
 // Add a single message to history
 export const addMessageToHistory = async (
-  userId: string,
   newMessage: MessageHistoryItem
 ): Promise<void> => {
   try {
-    const currentHistory = await getMessageHistory(userId);
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      throw new Error('User is not authenticated');
+    }
+    const currentHistory = await getMessageHistory();
     const updatedHistory = [...currentHistory, newMessage];
-    await setMessageHistory(userId, updatedHistory);
+    const userDocRef = doc(db, 'users', userId);
+    await updateDoc(userDocRef, {
+      userHistory: updatedHistory,
+      updatedAt: serverTimestamp()
+    });
+    console.log('Message added to history successfully');
+    
   } catch (error) {
     console.error('Error adding message to history:', error);
     throw error;
   }
 };
 
-// Clear message history
-export const clearMessageHistory = async (userId: string): Promise<void> => {
-  try {
-    await setMessageHistory(userId, []);
-    console.log('Message history cleared successfully');
-  } catch (error) {
-    console.error('Error clearing message history:', error);
-    throw error;
-  }
-};
 
 // Auth state observer
 export const onAuthStateChange = (callback: (user: User | null) => void) => {

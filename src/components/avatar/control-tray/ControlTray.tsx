@@ -21,7 +21,7 @@ import { useLiveAPIContext } from "@/contexts/LiveAPIContext";
 import { AudioRecorder } from "@/lib/audio-recorder";
 import AudioPulse from "../audio-pulse/AudioPulse";
 import "./control-tray.scss";
-import { Mic, MicOff, Pause, Play } from "lucide-react";
+import { MessagesSquare, Mic, MicOff, Pause, Play } from "lucide-react";
 import { Part } from "@google/genai";
 
 export type ControlTrayProps = {
